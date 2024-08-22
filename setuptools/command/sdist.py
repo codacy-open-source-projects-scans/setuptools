@@ -1,11 +1,15 @@
-from distutils import log
-import distutils.command.sdist as orig
-import os
+from __future__ import annotations
+
 import contextlib
+import os
 from itertools import chain
 
 from .._importlib import metadata
+from ..dist import Distribution
 from .build import _ORIGINAL_SUBCOMMANDS
+
+import distutils.command.sdist as orig
+from distutils import log
 
 _default_revctrl = list
 
@@ -43,7 +47,8 @@ class sdist(orig.sdist):
         ),
     ]
 
-    negative_opt = {}
+    distribution: Distribution  # override distutils.dist.Distribution with setuptools.dist.Distribution
+    negative_opt: dict[str, str] = {}
 
     README_EXTENSIONS = ['', '.rst', '.txt', '.md']
     READMES = tuple('README{0}'.format(ext) for ext in README_EXTENSIONS)

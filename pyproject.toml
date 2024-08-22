@@ -5,7 +5,7 @@ backend-path = ["."]
 
 [project]
 name = "setuptools"
-version = "72.2.0"
+version = "73.0.1"
 authors = [
 	{ name = "Python Packaging Authority", email = "distutils-sig@python.org" },
 ]
@@ -36,15 +36,10 @@ Changelog = "https://setuptools.pypa.io/en/stable/history.html"
 test = [
 	# upstream
 	"pytest >= 6, != 8.1.*",
-	"pytest-checkdocs >= 2.4",
-	"pytest-cov",
-	"pytest-mypy",
-	"pytest-enabler >= 2.2",
-	"pytest-ruff >= 0.2.1; sys_platform != 'cygwin'",
 
 	# local
 	"virtualenv>=13.0.0",
-	"wheel",
+	"wheel>=0.44.0",  # Consistent requirement normalisation in METADATA (see #4547)
 	"pip>=19.1", # For proper file:// URLs support.
 	"packaging>=23.2",
 	"jaraco.envs>=2.2",
@@ -81,6 +76,7 @@ test = [
 	# workaround for businho/pytest-ruff#28
 	'pytest-ruff < 0.4; platform_system == "Windows"',
 ]
+
 doc = [
 	# upstream
 	"sphinx >= 3.5",
@@ -110,7 +106,6 @@ ssl = []
 certs = []
 core = [
 	"packaging>=24",
-	"ordered-set>=3.1.1",
 	"more_itertools>=8.8",
 	"jaraco.text>=3.7",
 	"importlib_resources>=5.10.2; python_version < '3.9'",
@@ -121,6 +116,27 @@ core = [
 	# pkg_resources
 	"platformdirs >= 2.6.2",
 ]
+
+check = [
+	"pytest-checkdocs >= 2.4",
+	"pytest-ruff >= 0.2.1; sys_platform != 'cygwin'",
+]
+
+cover = [
+	"pytest-cov",
+]
+
+enabler = [
+	"pytest-enabler >= 2.2",
+]
+
+type = [
+	# upstream
+	"pytest-mypy",
+
+	# local
+]
+
 
 [project.entry-points."distutils.commands"]
 alias = "setuptools.command.alias:alias"
