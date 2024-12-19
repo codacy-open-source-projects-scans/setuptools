@@ -25,13 +25,14 @@ import importlib
 import os
 import pathlib
 import sys
+from collections.abc import Iterable, Iterator, Mapping
 from configparser import ConfigParser
 from glob import iglob
 from importlib.machinery import ModuleSpec, all_suffixes
 from itertools import chain
 from pathlib import Path
 from types import ModuleType, TracebackType
-from typing import TYPE_CHECKING, Any, Callable, Iterable, Iterator, Mapping, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, TypeVar
 
 from .._path import StrPath, same_path as _same_path
 from ..discovery import find_package_path
@@ -45,13 +46,13 @@ if TYPE_CHECKING:
     from setuptools.dist import Distribution
 
 _K = TypeVar("_K")
-_V = TypeVar("_V", covariant=True)
+_V_co = TypeVar("_V_co", covariant=True)
 
 
 class StaticModule:
     """Proxy to a module object that avoids executing arbitrary code."""
 
-    def __init__(self, name: str, spec: ModuleSpec):
+    def __init__(self, name: str, spec: ModuleSpec) -> None:
         module = ast.parse(pathlib.Path(spec.origin).read_bytes())  # type: ignore[arg-type] # Let it raise an error on None
         vars(self).update(locals())
         del self.self
@@ -354,7 +355,9 @@ def canonic_data_files(
     ]
 
 
-def entry_points(text: str, text_source="entry-points") -> dict[str, dict]:
+def entry_points(
+    text: str, text_source: str = "entry-points"
+) -> dict[str, dict[str, str]]:
     """Given the contents of entry-points file,
     process it into a 2-level dictionary (``dict[str, dict[str, str]]``).
     The first level keys are entry-point groups, the second level keys are
@@ -380,7 +383,7 @@ class EnsurePackagesDiscovered:
     and those might not have been processed yet.
     """
 
-    def __init__(self, distribution: Distribution):
+    def __init__(self, distribution: Distribution) -> None:
         self._dist = distribution
         self._called = False
 
@@ -398,7 +401,7 @@ class EnsurePackagesDiscovered:
         exc_type: type[BaseException] | None,
         exc_value: BaseException | None,
         traceback: TracebackType | None,
-    ) -> None:
+    ):
         if self._called:
             self._dist.set_defaults.analyse_name()  # Now we can set a default name
 
@@ -413,7 +416,7 @@ class EnsurePackagesDiscovered:
         return LazyMappingProxy(self._get_package_dir)
 
 
-class LazyMappingProxy(Mapping[_K, _V]):
+class LazyMappingProxy(Mapping[_K, _V_co]):
     """Mapping proxy that delays resolving the target object, until really needed.
 
     >>> def obtain_mapping():
@@ -427,16 +430,16 @@ class LazyMappingProxy(Mapping[_K, _V]):
     'other value'
     """
 
-    def __init__(self, obtain_mapping_value: Callable[[], Mapping[_K, _V]]):
+    def __init__(self, obtain_mapping_value: Callable[[], Mapping[_K, _V_co]]) -> None:
         self._obtain = obtain_mapping_value
-        self._value: Mapping[_K, _V] | None = None
+        self._value: Mapping[_K, _V_co] | None = None
 
-    def _target(self) -> Mapping[_K, _V]:
+    def _target(self) -> Mapping[_K, _V_co]:
         if self._value is None:
             self._value = self._obtain()
         return self._value
 
-    def __getitem__(self, key: _K) -> _V:
+    def __getitem__(self, key: _K) -> _V_co:
         return self._target()[key]
 
     def __len__(self) -> int:

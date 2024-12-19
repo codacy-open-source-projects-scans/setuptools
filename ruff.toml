@@ -1,3 +1,6 @@
+# extend pyproject.toml for requires-python (workaround astral-sh/ruff#10299)
+extend = "pyproject.toml"
+
 exclude = [
 	"**/_vendor",
 	"setuptools/_distutils",
@@ -16,13 +19,21 @@ extend-select = [
 	"FA", # flake8-future-annotations
 	"I", # isort
 	"PERF", # Perflint
+	"PGH", # pygrep-hooks (blanket-* rules)
+	"PT", # flake8-pytest-style
 	"PYI", # flake8-pyi
+	"RUF10", # unused-noqa & redirected-noqa
 	"TRY", # tryceratops
 	"UP", # pyupgrade
 	"YTT", # flake8-2020
 ]
 ignore = [
 	"PERF203", # try-except-in-loop, micro-optimisation with many false-positive. Worth checking but don't block CI
+	"PT004", # deprecated https://github.com/astral-sh/ruff/issues/8796#issuecomment-2057143531
+	"PT005", # deprecated https://github.com/astral-sh/ruff/issues/8796#issuecomment-2057143531
+	"PT007", # temporarily disabled, TODO: configure and standardize to preference
+	"PT011", # temporarily disabled, TODO: tighten expected error 
+	"PT012", # pytest-raises-with-multiple-statements, avoid extra dummy methods for a few lines, sometimes we explicitly assert in case of no error
 	"TRY003", # raise-vanilla-args, avoid multitude of exception classes
 	"TRY301", # raise-within-try, it's handy
 	"UP015", # redundant-open-modes, explicit is preferred
@@ -53,9 +64,6 @@ ignore = [
 ]
 
 [lint.per-file-ignores]
-# Only enforcing return type annotations for public modules
-"**/tests/**" = ["ANN2"]
-"tools/**" = ["ANN2"]
 # Suppress nuisance warnings about module-import-not-at-top-of-file (E402) due to workaround for #4476
 "setuptools/__init__.py" = ["E402"]
 "pkg_resources/__init__.py" = ["E402"]

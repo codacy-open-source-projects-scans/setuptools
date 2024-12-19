@@ -1,3 +1,88 @@
+v75.6.0
+=======
+
+Features
+--------
+
+- Preserve original ``PKG-INFO`` into ``METADATA`` when creating wheel
+  (instead of calling ``wheel.metadata.pkginfo_to_metadata``).
+  This helps to be more compliant with the flow specified in PEP 517. (#4701)
+- Changed the ``WindowsSdkVersion``, ``FrameworkVersion32`` and ``FrameworkVersion64`` properties of ``setuptools.msvc.PlatformInfo`` to return an empty `tuple` instead of `None` as a fallthrough case --  by :user:`Avasam` (#4754)
+
+
+v75.5.0
+=======
+
+Features
+--------
+
+- Removed support for ``SETUPTOOLS_DANGEROUSLY_SKIP_PYPROJECT_VALIDATION``, as it
+  is deemed prone to errors. (#4746)
+
+
+v75.4.0
+=======
+
+Features
+--------
+
+- Added support for the environment variable
+  ``SETUPTOOLS_DANGEROUSLY_SKIP_PYPROJECT_VALIDATION=true``, allowing users to bypass
+  the validation of ``pyproject.toml``.
+  This option should be used only as a last resort when resolving dependency
+  issues, as it may lead to improper functioning.
+  Users who enable this setting are responsible for ensuring that ``pyproject.toml``
+  complies with setuptools requirements. (#4611)
+
+  .. attention::
+     This environment variable was removed in a later version of ``setuptools``.
+
+- Require Python 3.9 or later. (#4718)
+- Remove dependency on ``importlib_resources``
+  and the vendored copy of the library.
+  Instead, ``setuptools`` consistently rely on stdlib's ``importlib.resources``
+  (available on Python 3.9+). (#4718)
+- Setuptools' ``bdist_wheel`` implementation no longer produces wheels with
+  the ``m`` SOABI flag (pymalloc-related).
+  This flag was removed on Python 3.8+ (see :obj:`sys.abiflags`). (#4718)
+- Updated vendored packaging version to 24.2. (#4740)
+
+
+Bugfixes
+--------
+
+- Merge with pypa/distutils@251797602, including fix for dirutil.mkpath handling in pypa/distutils#304.
+
+
+v75.3.0
+=======
+
+Features
+--------
+
+- Allowed using `dict` as an ordered type in ``setuptools.dist.check_requirements`` -- by :user:`Avasam` (#4575)
+
+
+Bugfixes
+--------
+
+- Ensured methods in ``setuptools.modified`` preferably raise a consistent
+  ``distutils.errors.DistutilsError`` type
+  (except in the deprecated use case of ``SETUPTOOLS_USE_DISTUTILS=stdlib``)
+  -- by :user:`Avasam` (#4567)
+- Fix the ABI tag when building a wheel using the debug build of Python 3.13 on Windows. Previously, the ABI tag was missing the ``"d"`` flag. (#4674)
+- Fix clashes for ``optional-dependencies`` in ``pyproject.toml`` and
+  ``extra_requires`` in ``setup.cfg/setup.py``.
+  As per PEP 621, ``optional-dependencies`` have to be honoured and dynamic
+  behaviour is not allowed. (#4696)
+
+
+Misc
+----
+
+- #4560
+
+
 v75.2.0
 =======
 
