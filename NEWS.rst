@@ -1,3 +1,12 @@
+v82.0.0
+=======
+
+Deprecations and Removals
+-------------------------
+
+- ``pkg_resources`` has been removed from Setuptools. Most common uses of ``pkg_resources`` have been superseded by the `importlib.resources <https://docs.python.org/3/library/importlib.resources.html>`_ and `importlib.metadata <https://docs.python.org/3/library/importlib.metadata.html>`_ projects. Projects and environments relying on ``pkg_resources`` for namespace packages or other behavior should depend on older versions of ``setuptools``. (#3085)
+
+
 v81.0.0
 =======
 
@@ -376,6 +385,15 @@ Bugfixes
 
 - Restored implicit distutils.ccompiler import for g-ir-scanner. (#4871)
 - Restore ``distutils.ccompiler.compiler_class`` -- by :user:`Avasam` (#4876)
+
+
+v75.3.4
+=======
+
+Bugfixes
+--------
+
+- Backport CVE-47273 from 78.1.1 for Python 3.8. (#4946)
 
 
 v75.3.3
